@@ -5,10 +5,14 @@ import requests
 import time
 import base64
 
+MAX_DESCRIPTION_TOKENS = 1234
+IMAGE_SIZE = "1024x1024"
+
+
 def encode_image(image_path):
     """
     Encodes the given image file into a base64 string.
-    
+
     Args:
     image_path (str): Path to the image file.
 
@@ -16,12 +20,13 @@ def encode_image(image_path):
     str: Base64 encoded string of the image.
     """
     with open(image_path, "rb") as image_file:
-        return base64.b64encode(image_file.read()).decode('utf-8')
+        return base64.b64encode(image_file.read()).decode("utf-8")
+
 
 def describe_image(image_path, openai_api_key, description_prompt):
     """
     Uses the OpenAI API to describe an image from the given file path.
-    
+
     Args:
     image_path (str): The path to the image file.
     openai_api_key (str): OpenAI API key.
@@ -39,8 +44,8 @@ def describe_image(image_path, openai_api_key, description_prompt):
             "role": "user",
             "content": [
                 {"type": "text", "text": description_prompt},
-                {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{encoded_image}"}}
-            ]
+                {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{encoded_image}"}},
+            ],
         }
     ]
 
@@ -48,10 +53,11 @@ def describe_image(image_path, openai_api_key, description_prompt):
     response = client.chat.completions.create(
         model="gpt-4-vision-preview",
         messages=messages,
-        max_tokens=300,
+        max_tokens=MAX_DESCRIPTION_TOKENS,
     )
 
     return response.choices[0].message.content
+
 
 def generate_an_image_from_prompt(openai_api_key, image_generation_prompt, filename):
     """
@@ -68,7 +74,7 @@ def generate_an_image_from_prompt(openai_api_key, image_generation_prompt, filen
     response = client.images.generate(
         model="dall-e-3",
         prompt=image_generation_prompt,
-        size="1024x1024",
+        size=IMAGE_SIZE,
         quality="standard",
         n=1,
     )
@@ -79,10 +85,11 @@ def generate_an_image_from_prompt(openai_api_key, image_generation_prompt, filen
     # Download and save the image
     image_response = requests.get(image_url)
     if image_response.status_code == 200:
-        with open(filename, 'wb') as file:
+        with open(filename, "wb") as file:
             file.write(image_response.content)
     else:
         print(f"Failed to download the image from {image_url}")
+
 
 def main(apikey_filename, generation_prompt, folder_name, description_prompt, number_of_iteration):
     """
@@ -105,12 +112,13 @@ def main(apikey_filename, generation_prompt, folder_name, description_prompt, nu
 
         description = describe_image(new_image_filename, openai_api_key, description_prompt)
         spent_time = time.time() - start_time
-        print('\n\n')
-        print('-' * 33)
-        print(f'Iteration: {str(iteration).zfill(3)}. Time: {spent_time:.3f} s.')
-        print('-' * 33)
+        print("\n\n")
+        print("-" * 33)
+        print(f"Iteration: {str(iteration).zfill(3)}. Time: {spent_time:.3f} s.")
+        print("-" * 33)
         print(description)
         generation_prompt = description
+
 
 if __name__ == "__main__":
     # Setting up command line arguments
