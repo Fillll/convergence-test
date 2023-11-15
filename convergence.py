@@ -107,6 +107,10 @@ def main(apikey_filename, generation_prompt, folder_name, description_prompt, nu
     if existing_files:
         highest_number = max([int(f.split('.')[0]) for f in existing_files])
         starting_iteration = highest_number + 1
+        print(f'🚨 FOUND EXISTING TEST IN THE FOLDER {folder_name}!')
+        print(f'Total files in the folder: {len(existing_files)}.')
+        print(f'The latest file: {highest_number}.')
+        print(f'Will start from iteration: {starting_iteration}.')
     else:
         # If there are no existing files, start from the beginning.
         starting_iteration = 0
