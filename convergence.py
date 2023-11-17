@@ -107,7 +107,7 @@ def main(apikey_filename, generation_prompt, folder_name, description_prompt, nu
     if existing_files:
         highest_number = max([int(f.split('.')[0]) for f in existing_files])
         starting_iteration = highest_number + 1
-        print(f'🚨 FOUND EXISTING TEST IN THE FOLDER {folder_name}!')
+        print(f'🚨 FOUND EXISTING TEST IN THE FOLDER `{folder_name}`!')
         print(f'Total files in the folder: {len(existing_files)}.')
         print(f'The latest file: {highest_number}.')
         print(f'Will start from iteration: {starting_iteration}.')
@@ -139,10 +139,10 @@ def main(apikey_filename, generation_prompt, folder_name, description_prompt, nu
 
         # Calculate the time spent on this iteration.
         spent_time = time.time() - start_time
-        print("\n")
         print("-" * 33)
         print(f" Iteration: {str(iteration).zfill(3)}. Time: {spent_time:.3f} s.")
         print("-" * 33)
+        print("\n")
         print(description)
         print("\n")
 
